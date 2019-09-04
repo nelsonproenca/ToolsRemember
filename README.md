@@ -4,7 +4,7 @@ Cadastrar ferramentas que o usuário usou e gostou para acessos futuro e indica�
 
 ## Versão inicial 
 - 04/09/2019 (Inicio)
-    1. **Desenvolvimento**: React, npm, node.js, localStorage.
+    1. **Desenvolvimento**: React, npm, node.js, css3, sass, babel, parcel, localStorage.
     2. **Estrutura**:
         - Pasta principal Src
         - Pasta components (arquivos de comportamento)
