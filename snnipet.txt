@@ -1,0 +1,477 @@
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+import React from "react";
+
+import {
+
+  Alert,
+
+  Container,
+
+  Row,
+
+  Col,
+
+  ButtonToolbar,
+
+  Button
+
+} from "react-bootstrap";
+
+ 
+
+import RemoveToolsModal from "./RemoveToolsModal";
+
+ 
+
+const Tool = props => {
+
+  const [modalShow, setModalShow] = React.useState(false);
+
+  return (
+
+    <Alert variant="light border">
+
+      <Container variant="fluid">
+
+        <Row>
+
+          <Col>
+
+            <Alert.Link href={props.tool.Link}>{props.tool.Name}</Alert.Link>
+
+          </Col>
+
+          <Col md="5">&nbsp;</Col>
+
+          <Col md="1">
+
+            <ButtonToolbar>
+
+              <Button variant="link" onClick={() => setModalShow(true)}>
+
+                Remover
+
+              </Button>
+
+              <RemoveToolsModal
+
+                recipient={props.tool.Name}
+
+                show={modalShow}
+
+                onHide={() => setModalShow(false)}
+
+              />
+
+            </ButtonToolbar>
+
+          </Col>
+
+        </Row>
+
+        <Row>{props.tool.Description}</Row>
+
+      </Container>
+
+    </Alert>
+
+  );
+
+};
+
+ 
+
+export default Tool;
+
+ 
+
+ 
+
+import React from "react";
+
+ 
+
+import Tool from "../components/Tool";
+
+ 
+
+const ToolsList = () => {
+
+  const tool = {
+
+    Name: "Ferramenta 3",
+
+    Link: "http://www.contoso.com",
+
+    Description:
+
+      "Nunc finibus dui sem, sodales finibus lorem mollis vel. Aliquam eget ante tortor. Proin sapien ex, maximus vel velit sed, iaculis pellentesque sem.",
+
+    Tags: "React MS "
+
+  };
+
+ 
+
+  return (
+
+    <>
+
+      <Tool tool={tool} />
+
+      <Tool tool={tool} />
+
+      <Tool tool={tool} />
+
+    </>
+
+  );
+
+};
+
+ 
+
+export default ToolsList;
+
+ 
+
+ 
+
+export default function reducer(state, action) {
+
+  if (action.type === "ADD_TOOL") {
+
+    return {
+
+      tools: state.tools.concat(action.tool)
+
+    };
+
+  } else if (action.type === "DELETE_TOOL") {
+
+    return {
+
+      messages: [
+
+        ...state.tools.slice(0, action.index),
+
+        ...state.tools.slice(action.index + 1)
+
+      ]
+
+    };
+
+  } else if (action.type === "SEARCH_TOOL") {
+
+    let newTools = [];
+
+ 
+
+    if (action.searchInTags) {
+
+      newTools = state.tools.filter(tool => {
+
+        return tool.Tags.search(action.criteria) !== -1;
+
+      });
+
+    } else {
+
+      newTools = state.tools.filter(tool => {
+
+        return (
+
+          tool.Tags.search(action.criteria) !== -1 ||
+
+          tool.Name.search(action.criteria) !== -1 ||
+
+          tool.Link.search(action.criteria) !== -1 ||
+
+          tool.Description.search(action.criteria) !== -1
+
+        );
+
+      });
+
+    }
+
+ 
+
+    return {
+
+      tools: newTools
+
+    };
+
+  } else {
+
+    return state;
+
+  }
+
+}
+
+ 
+
+ 
+
+import reducer from "./reducer";
+
+ 
+
+import { createStore } from "redux";
+
+ 
+
+const initialState = { tools: [] };
+
+ 
+
+export const store = createStore(reducer, initialState);
+
+ 
+
+ 
+
+import React, { Fragment, useState, Component } from "react";
+
+ 
+
+import {
+
+  Container,
+
+  Row,
+
+  Col,
+
+  Button,
+
+  Form,
+
+  ButtonToolbar
+
+} from "react-bootstrap";
+
+ 
+
+import "./App.css";
+
+ 
+
+import AddToolsModal from "./components/AddToolsModal";
+
+import ToolsList from "./containers/ToolsList";
+
+import { store } from "./reducerTools/store";
+
+ 
+
+ 
+
+class App extends Component {
+
+  componentDidMount() {
+
+    store.subscribe(() => this.forceUpdate());
+
+  }
+
+ 
+
+  render() {
+
+    const [modalShow, setModalShow] = useState(false);
+
+    const [tags, setTags] = useState("");
+
+ 
+
+    const handleChange = ({ target: { value } }) => {
+
+      setTags(value);
+
+    };
+
+ 
+
+    const handleKeyPress = () => {};
+
+ 
+
+    return (
+
+      <Fragment>
+
+        <Container>
+
+          <h1>VUTTR</h1>
+
+          <p>Very Useful Tools to Remember</p>
+
+        </Container>
+
+        <Container>
+
+          <Form>
+
+            <Row>
+
+              <Col md="5">
+
+                <Form.Control
+
+                  type="text"
+
+                  placeholder="Search ..."
+
+                  onChange={handleChange}
+
+                  onKeyPress={handleKeyPress}
+
+                />
+
+              </Col>
+
+              <Col>
+
+                <Form.Check
+
+                  custom
+
+                  label="search in tags only"
+
+                  type="checkbox"
+
+                  id="inline-2"
+
+                />
+
+              </Col>
+
+              <Col md="2">
+
+                <ButtonToolbar>
+
+                  <Button variant="primary" onClick={() => setModalShow(true)}>
+
+                    Add
+
+                  </Button>
+
+                  <AddToolsModal
+
+                    show={modalShow}
+
+                    onHide={() => setModalShow(false)}
+
+                  />
+
+                </ButtonToolbar>
+
+              </Col>
+
+            </Row>
+
+            <br />
+
+            <Row>
+
+              <ToolsList />
+
+            </Row>
+
+          </Form>
+
+        </Container>
+
+      </Fragment>
+
+    );
+
+  }
+
+}
+
+ 
+
+export default App;
+
+ 
+
+ 
+
+ 
+
+import React from "react";
+
+import ReactDOM from "react-dom";
+
+ 
+
+import "bootstrap/dist/css/bootstrap.min.css";
+
+ 
+
+import "./index.css";
+
+import App from "./App";
+
+import * as serviceWorker from "./serviceWorker";
+
+ 
+
+ReactDOM.render(<App />, document.getElementById("root"));
+
+ 
+
+// If you want your app to work offline and load faster, you can change
+
+// unregister() to register() below. Note this comes with some pitfalls.
+
+// Learn more about service workers: https://bit.ly/CRA-PWA
+
+serviceWorker.unregister();
+
+ 
+
+ 
+
+ 
+
+Nelson Proença
+­­­­­­­­­­­­­­_­­­­­­­­­­_________________________________________
+Developer
+
+Application Development & Support | Change & IT
+
+Whitestar Asset Solutions, SA
+
+Edifício D. Sebastião
+
+Rua Quinta do Quintã, nº 6, Quinta da Fonte
+
+2770-203 Paço de Arcos, Portugal
+
+Email: nelson.proenca@whitestar.pt
+
+ 
+
+Arrow Global
+
+Building Better Financial Futures
+
+ 
+
+This message (including any attachments) is intended only for the use of the individual or entity to which it is addressed and may contain information that is non-public, proprietary, privileged, confidential, and exempt from disclosure under applicable law or may constitute as attorney work product. If you are not the intended recipient, you are hereby notified that any use, dissemination, distribution, or copying of this communication is strictly prohibited. If you have received this communication in error, notify us immediately by telephone and (i) destroy this message if a facsimile or (ii) delete this message immediately if this is an electronic communication. Thank you.
