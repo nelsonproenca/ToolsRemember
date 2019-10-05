@@ -29,7 +29,8 @@ const Tool = props => {
                 </Button>
 
                 <RemoveToolsModal
-                  recipient={props.tool.Name}
+                  index={props.index}
+                  recipient={props.tool}
                   show={modalShow}
                   onHide={() => setModalShow(false)}
                 />

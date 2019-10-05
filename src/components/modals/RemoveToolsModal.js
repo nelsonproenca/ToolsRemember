@@ -2,12 +2,24 @@ import React, { Fragment, useState } from "react";
 
 import { Modal, Button, Alert } from "react-bootstrap";
 
+import { store } from "../../reducerTools/store";
+
 const RemoveToolsModal = props => {
   const [show, setShow] = useState(false);
   const [remove, setRemove] = useState(false);
 
   const handleClose = () => setShow(false);
-  const handleRemove = () => setRemove(true);
+  const handleRemove = () => {
+    deleteTool();
+    setRemove(true);
+  };
+
+  const deleteTool = index => {
+    store.dispatch({
+      type: "DELETE_TOOL",
+      index: props.index
+    });
+  };
 
   return (
     <>
@@ -23,7 +35,9 @@ const RemoveToolsModal = props => {
           <Modal.Title>Remove tools</Modal.Title>
         </Modal.Header>
 
-        <Modal.Body>Are you sure want to remove {props.recipient}</Modal.Body>
+        <Modal.Body>
+          Are you sure want to remove {props.recipient.Name} ?
+        </Modal.Body>
 
         <Modal.Footer>
           {!remove && (
