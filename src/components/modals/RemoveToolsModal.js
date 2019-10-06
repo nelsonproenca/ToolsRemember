@@ -6,19 +6,22 @@ import { store } from "../../reducerTools/store";
 
 const RemoveToolsModal = props => {
   const [show, setShow] = useState(false);
-  const [remove, setRemove] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleRemove = () => {
     deleteTool();
-    setRemove(true);
+    closeModal();
   };
 
-  const deleteTool = index => {
+  const deleteTool = () => {
     store.dispatch({
       type: "DELETE_TOOL",
       index: props.index
     });
+  };
+
+  const closeModal = () => {
+    props.onHide();
   };
 
   return (
@@ -40,15 +43,11 @@ const RemoveToolsModal = props => {
         </Modal.Body>
 
         <Modal.Footer>
-          {!remove && (
-            <Fragment>
-              <Button variant="primary" block="true" onClick={handleRemove}>
-                Yes, remove
-              </Button>
-            </Fragment>
-          )}
-
-          {remove && <Alert variant="success">Success !!! Tool removed.</Alert>}
+          <Fragment>
+            <Button variant="primary" block="true" onClick={handleRemove}>
+              Yes, remove
+            </Button>
+          </Fragment>
         </Modal.Footer>
       </Modal>
     </>

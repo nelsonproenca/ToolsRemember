@@ -17,11 +17,17 @@ import ToolsList from "./ToolsList";
 class App extends Component {
   state = {
     modalShow: false,
-    tags: ""
+    tags: "",
+    tools: []
   };
 
   componentDidMount() {
     store.subscribe(() => this.forceUpdate());
+
+    store.dispatch({
+      type: "SEARCH_TOOL",
+      criteria: ""
+    });
   }
 
   handleChange = ({ target: { value } }) => {
@@ -31,7 +37,10 @@ class App extends Component {
   };
 
   handleKeyPress = event => {
+    console.log("event", event);
     if (event === "Enter") {
+      console.log("tags", this.state.tags);
+
       store.dispatch({
         type: "SEARCH_TOOL",
         criteria: this.state.tags
@@ -48,6 +57,8 @@ class App extends Component {
   };
 
   render() {
+    const tools = store.getState().tools;
+
     return (
       <Fragment>
         <Container>
@@ -58,7 +69,7 @@ class App extends Component {
         <Container>
           <Form>
             <Row>
-              <Col md="5">
+              <Col md="4">
                 <Form.Control
                   type="text"
                   placeholder="Search ..."
@@ -66,7 +77,6 @@ class App extends Component {
                   onKeyPress={this.handleKeyPress}
                 />
               </Col>
-
               <Col>
                 <Form.Check
                   custom
@@ -75,10 +85,13 @@ class App extends Component {
                   id="inline-2"
                 />
               </Col>
-
               <Col md="2">
                 <ButtonToolbar>
-                  <Button variant="primary" onClick={this.setModalShow}>
+                  <Button
+                    variant="primary"
+                    block="true"
+                    onClick={this.setModalShow}
+                  >
                     Add
                   </Button>
 
@@ -88,9 +101,9 @@ class App extends Component {
                   />
                 </ButtonToolbar>
               </Col>
-            </Row>{" "}
+            </Row>
             <Row>
-              <ToolsList />
+              <ToolsList tools={tools} />
             </Row>
           </Form>
         </Container>

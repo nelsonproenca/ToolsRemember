@@ -2,10 +2,8 @@ import React from "react";
 
 import Tool from "../components/Tool";
 
-import { store } from "../reducerTools/store";
-
-const ToolsList = () => {
-  const tools = store.getState().tools;
+const ToolsList = props => {
+  const tools = props.tools;
 
   if (!tools) return <></>;
 
